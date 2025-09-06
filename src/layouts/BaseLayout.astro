@@ -1,0 +1,79 @@
+---
+import QuickLauncher from "../components/QuickLauncher";
+import { getCollection } from "astro:content";
+
+import "../styles/global.css";
+
+const apps = await getCollection("apps");
+const items = apps.map(a => ({ title:a.data.title, url:a.data.url, icon:a.data.icon, tags:a.data.tags, hotkey:a.data.hotkey }));
+const { title = "Douglas Sellers — Portfolio", description = "Fast, human-centered software." } = Astro.props;
+
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- No-flash theme init (browser-only) -->
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem("ds.theme");
+          var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+          var theme = saved || (prefersLight ? "light" : "dark");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header style="position:sticky;top:0;backdrop-filter:saturate(1.1) blur(6px);background:color-mix(in oklab,var(--bg) 88%, transparent);border-bottom:1px solid var(--border);">
+      <div class="container">
+        <nav>
+          <a href="/">Home</a>
+          <a href="/experience">Experience</a>
+          <a href="/projects">Projects</a>
+          <a href="/apps">Small Apps</a>
+          <a href="/stack">Tech</a>
+          <a href="/about">About</a>
+          <a href="/contact" style="margin-left:auto">Contact</a>
+          <button id="theme-toggle" class="btn">Light/Dark</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <slot />
+    </main>
+
+    <!-- Secret launcher island -->
+    <QuickLauncher client:load apps={items} />
+
+    <footer style="border-top:1px solid var(--border);">
+      <div class="container">© {new Date().getFullYear()} Douglas Sellers</div>
+    </footer>
+
+    <!-- Theme toggle logic (browser-only) -->
+    <script is:inline>
+      (function () {
+        var btn = document.getElementById("theme-toggle");
+        if (!btn) return;
+        function setLabel() {
+          var t = document.documentElement.getAttribute("data-theme") || "dark";
+          btn.textContent = t === "light" ? "Dark mode" : "Light mode";
+        }
+        setLabel();
+        btn.addEventListener("click", function () {
+          var el = document.documentElement;
+          var next = el.getAttribute("data-theme") === "light" ? "dark" : "light";
+          el.setAttribute("data-theme", next);
+          try { localStorage.setItem("ds.theme", next); } catch (e) {}
+          setLabel();
+        });
+      })();
+    </script>
+  </body>
+</html>

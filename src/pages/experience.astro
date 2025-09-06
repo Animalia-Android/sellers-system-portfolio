@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+const roles = await getCollection("experience");
+---
+<BaseLayout title="Experience — Doug Sellers">
+  <h1>Experience</h1>
+  <div style="display:grid;gap:12px">
+    {roles.map(r => (
+      <section class="card">
+        <h3>{r.data.title} — {r.data.company}</h3>
+        <div style="color:var(--muted)">{r.data.start} – {r.data.end ?? "Present"}{r.data.location ? ` · ${r.data.location}` : ""}</div>
+        <ul>{r.data.highlights?.map(h => <li>{h}</li>)}</ul>
+      </section>
+    ))}
+  </div>
+  <style>.card{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card)}</style>
+</BaseLayout>

@@ -1,0 +1,92 @@
+Base tokens :root {
+  --bg: #0b0c0f;
+  --ink: #e7e7ea;
+  --muted: #a7a7ad;
+  --card: #12141a;
+  --border: #24262f;
+  --accent: #d4b062;
+  color-scheme: dark;
+}
+/* :root[data-theme='light'] {
+  --bg: #fafafa;
+  --ink: #111315;
+  --muted: #60636b;
+  --card: #ffffff;
+  --border: #e6e7ea;
+  --accent: #8a6a2f;
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui;
+}
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+a {
+  color: inherit;
+} */
+
+/* Dark (default) */
+:root {
+  --bg: #0b0c0f;
+  --ink: #e7e7ea;
+  --muted: #a7a7ad;
+  --card: #12141a;
+  --border: #24262f;
+  --accent: #d4b062;
+  color-scheme: dark;
+}
+/* Light */
+:root[data-theme='light'] {
+  --bg: #fafafa;
+  --ink: #111315;
+  --muted: #60636b;
+  --card: #ffffff;
+  --border: #e6e7ea;
+  --accent: #8a6a2f;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, Segoe UI, Roboto, Apple Color Emoji;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.btn {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 6px 10px;
+}

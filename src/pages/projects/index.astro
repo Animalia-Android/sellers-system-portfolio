@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+const projects = await getCollection("projects");
+---
+<BaseLayout title="Projects — Doug Sellers">
+  <h1>Projects</h1>
+  <ul style="list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+    {projects.map((p) => (
+      <li class="card">
+        <a href={`/projects/${p.slug}/`} style="display:block">
+          <strong>{p.data.title}</strong>
+          <div style="color:var(--muted)">{p.data.summary}</div>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <style>.card{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card)}</style>
+</BaseLayout>

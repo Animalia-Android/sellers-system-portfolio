@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Contact — Doug Sellers">
+  <h1>Contact</h1>
+  <ul style="list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+    <li><a class="tile" href="https://www.linkedin.com/in/douglas-sellers" rel="me noopener" target="_blank">LinkedIn</a></li>
+    <li><a class="tile" href="https://github.com/Animalia-Android" rel="me noopener" target="_blank">GitHub</a></li>
+    <li><a class="tile" href="/resume.pdf" download>Resume (PDF)</a></li>
+    <li><a class="tile" href="mailto:dougsellers.dev@gmail.com?subject=Hi%20Doug">Email</a></li>
+  </ul>
+  <style>.tile{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card);display:block;text-align:center}</style>
+</BaseLayout>
