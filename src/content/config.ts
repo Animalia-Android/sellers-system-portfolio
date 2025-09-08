@@ -16,17 +16,20 @@ export const projects = defineCollection({
   }),
 });
 
-export const experience = defineCollection({
+const experience = defineCollection({
   schema: z.object({
     company: z.string(),
     title: z.string(),
-    start: z.string(),
-    end: z.string().optional(),
+    kind: z.enum(['freelance', 'startup', 'enterprise']).default('startup'),
     location: z.string().optional(),
+    start: z.string(), // "YYYY-MM"
+    end: z.string().optional(), // "YYYY-MM" or omit for Present
     highlights: z.array(z.string()).default([]),
     stack: z.array(z.string()).default([]),
   }),
 });
+
+// export const collections = { projects, experience, apps, ... }
 
 export const apps = defineCollection({
   schema: z.object({

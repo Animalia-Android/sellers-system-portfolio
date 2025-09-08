@@ -1,18 +1,85 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+
 const roles = await getCollection("experience");
+
+// helpers
+const labels = { freelance: "Freelance", startup: "Startups", enterprise: "Enterprise" } as const;
+const order: Array<keyof typeof labels> = ["freelance", "startup", "enterprise"];
+const toDate = (ym: string) => {
+  const [y, m] = ym.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, 1);
+};
+const fmt = (ym?: string) =>
+  ym ? toDate(ym).toLocaleString("en-US", { month: "short", year: "numeric" }) : "Present";
+
+// group + sort (most recent first)
+const grouped: Record<string, typeof roles> = Object.fromEntries(order.map(k => [k, []]));
+for (const r of roles) (grouped[r.data.kind ?? "startup"] as typeof roles).push(r);
+order.forEach(k =>
+  grouped[k].sort((a, b) => {
+    const aEnd = a.data.end ? toDate(a.data.end) : new Date(9999,0,1);
+    const bEnd = b.data.end ? toDate(b.data.end) : new Date(9999,0,1);
+    return bEnd.getTime() - aEnd.getTime() || toDate(b.data.start).getTime() - toDate(a.data.start).getTime();
+  })
+);
 ---
 <BaseLayout title="Experience — Doug Sellers">
   <h1>Experience</h1>
-  <div style="display:grid;gap:12px">
-    {roles.map(r => (
-      <section class="card">
-        <h3>{r.data.title} — {r.data.company}</h3>
-        <div style="color:var(--muted)">{r.data.start} – {r.data.end ?? "Present"}{r.data.location ? ` · ${r.data.location}` : ""}</div>
-        <ul>{r.data.highlights?.map(h => <li>{h}</li>)}</ul>
-      </section>
-    ))}
+
+  <!-- Filter chips -->
+  <div class="filters">
+    <button class="chip" data-filter="all" aria-pressed="true">All</button>
+    <button class="chip" data-filter="freelance">Freelance</button>
+    <button class="chip" data-filter="startup">Startups</button>
+    <button class="chip" data-filter="enterprise">Enterprise</button>
   </div>
-  <style>.card{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card)}</style>
+
+  {order.map((kind) => (
+    <section class="group" data-kind={kind}>
+      <h2 class="muted">{labels[kind]}</h2>
+      <div class="cards">
+        {grouped[kind].map((r) => (
+          <article class="card">
+            <h3 style="margin:0 0 4px">{r.data.title} — {r.data.company}</h3>
+            <div class="muted" style="font-size:12px">
+              {fmt(r.data.start)} – {fmt(r.data.end)}{r.data.location ? ` · ${r.data.location}` : ""}
+            </div>
+            {r.data.highlights?.length ? <ul style="margin:8px 0 0 18px">
+              {r.data.highlights.map(h => <li>{h}</li>)}
+            </ul> : null}
+            {r.data.stack?.length ? <div class="muted" style="margin-top:6px;font-size:12px">
+              {r.data.stack.join(" · ")}
+            </div> : null}
+          </article>
+        ))}
+        {grouped[kind].length === 0 ? <p class="muted">No entries yet.</p> : null}
+      </div>
+    </section>
+  ))}
+
+  <style>
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+    .chip{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--ink);cursor:pointer}
+    .chip[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px}
+    h2{margin:.4rem 0}
+    h3{font-size:1rem}
+    @media (max-width:480px){ h3{font-size:.95rem} }
+  </style>
+
+  <script is:inline>
+    (function () {
+      const chips = document.querySelectorAll<HTMLButtonElement>('.filters .chip');
+      const groups = document.querySelectorAll<HTMLElement>('section.group');
+      chips.forEach(chip => chip.addEventListener('click', () => {
+        chips.forEach(c => c.setAttribute('aria-pressed','false'));
+        chip.setAttribute('aria-pressed','true');
+        const f = chip.getAttribute('data-filter');
+        groups.forEach(g => {
+          g.style.display = (f === 'all' || g.getAttribute('data-kind') === f) ? '' : 'none';
+        });
+      }));
+    })();
+  </script>
 </BaseLayout>

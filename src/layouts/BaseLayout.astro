@@ -3,6 +3,7 @@ import QuickLauncher from "../components/QuickLauncher";
 import { getCollection } from "astro:content";
 
 import "../styles/global.css";
+import Footer from "../components/Footer.astro";
 
 const apps = await getCollection("apps");
 const items = apps.map(a => ({ title:a.data.title, url:a.data.url, icon:a.data.icon, tags:a.data.tags, hotkey:a.data.hotkey }));
@@ -36,8 +37,8 @@ const { title = "Douglas Sellers — Portfolio", description = "Fast, human-cent
           <a href="/">Home</a>
           <a href="/experience">Experience</a>
           <a href="/projects">Projects</a>
-          <a href="/apps">Small Apps</a>
-          <a href="/stack">Tech</a>
+          <!-- <a href="/apps">Small Apps</a> -->
+          <!-- <a href="/tech">Tech</a> -->
           <a href="/about">About</a>
           <a href="/contact" style="margin-left:auto">Contact</a>
           <button id="theme-toggle" class="btn">Light/Dark</button>
@@ -52,9 +53,7 @@ const { title = "Douglas Sellers — Portfolio", description = "Fast, human-cent
     <!-- Secret launcher island -->
     <QuickLauncher client:load apps={items} />
 
-    <footer style="border-top:1px solid var(--border);">
-      <div class="container">© {new Date().getFullYear()} Douglas Sellers</div>
-    </footer>
+    <Footer />
 
     <!-- Theme toggle logic (browser-only) -->
     <script is:inline>

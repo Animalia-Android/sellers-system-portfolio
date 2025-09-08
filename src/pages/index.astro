@@ -1,21 +1,79 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { iconUrl } from "../lib/icons"
+
+const all = await getCollection("projects");
+const featured = all.filter(p => p.data.featured).slice(0, 3);
+
+// Icons to show in the toolbox strip (use any you like)
+const TOOL_ICONS = ["react","astro","nextjs","typescript","tailwind","vercel"];
 ---
-<BaseLayout title="Doug Sellers — Portfolio">
-  <section style="padding:32px 0;">
-    <h1 style="font-size:clamp(28px,3.8vw,44px);margin:0 0 .4rem;">Doug Sellers</h1>
-    <p style="max-width:60ch;color:var(--muted)">Software Engineer — React, TypeScript, Node. Building fast, human-centered interfaces and reliable systems.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px">
-      <a class="tile" href="/experience">Professional Experience</a>
-      <a class="tile" href="/projects">Personal Projects</a>
-      <a class="tile" href="/apps">Small Apps</a>
-      <a class="tile" href="/stack">Tech I Use</a>
-      <a class="tile" href="/about">About</a>
-      <a class="tile" href="/contact">Contact</a>
+<BaseLayout title="Doug Sellers — Software Engineer" description="Fast, human-centered software.">
+  <!-- Hero -->
+  <section class="container" style="padding-top: 28px; padding-bottom: 8px;">
+    <p class="eyebrow">Sellers Studio</p>
+    <h1>Fast, human-centered software</h1>
+    <p class="lede muted" style="max-width: 62ch;">
+      I design and build clean UIs and reliable systems. Content-first sites, focused apps, and
+      small tools that feel great on mobile.
+    </p>
+    <div class="actions">
+      <a href="/projects" class="btn">View work</a>
+      <a href="/contact" class="btn ghost">Get in touch</a>
     </div>
   </section>
+
+  <!-- Featured work -->
+  <section class="container" aria-labelledby="work">
+    <h2 id="work" class="muted" style="margin-bottom:8px;">Featured work</h2>
+    <div class="cards">
+      {featured.map(p => (
+        <article class="card">
+          <a href={`/projects/${p.slug}/`} style="display:block">
+            <strong>{p.data.title}</strong>
+            <div class="muted" style="margin-top:4px;">{p.data.summary}</div>
+            {p.data.tags?.length ? (
+              <div class="muted" style="margin-top:6px;font-size:12px;">{p.data.tags.slice(0,4).join(" · ")}</div>
+            ) : null}
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- Toolbox strip -->
+  <section class="container" aria-labelledby="stack">
+    <h2 id="stack" class="muted" style="margin-bottom:8px;">From the toolbox</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      {TOOL_ICONS.map(id => (
+        <a href="/tech" aria-label={`See how I use ${id}`} class="tool">
+          <span class="icon-mask" aria-hidden="true" style={`--icon:url('${iconUrl ? iconUrl(id) : `/icons/${id}.svg`}')`}></span>
+          <span class="tool-name">{id}</span>
+        </a>
+      ))}
+      <a href="/tech" class="tool more">See all →</a>
+    </div>
+  </section>
+
+  <!-- Secret launcher hint -->
+  <section class="container">
+    <p class="muted" style="font-size:12px;margin-top:8px;">
+      Tip: double-tap <kbd>Shift</kbd> or long-press the logo to open the quick launcher.
+    </p>
+  </section>
+
   <style>
-    .tile{padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center}
-    @media (hover:hover){ .tile:hover{transform:translateY(-1px)} }
+    .eyebrow{letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--muted);margin:0 0 6px}
+    .lede{font-size:clamp(1rem, 2.6vw, 1.125rem)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn.ghost{background:transparent}
+
+    .tool{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);
+      border-radius:999px;padding:6px 10px;background:var(--card)}
+    .tool-name{font-size:12px;color:var(--muted)}
+    .tool.more{font-weight:600}
+
+    /* ensure cards grid stays tidy on phones; uses your global .cards */
   </style>
 </BaseLayout>

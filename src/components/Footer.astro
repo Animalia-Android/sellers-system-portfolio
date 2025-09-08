@@ -1,0 +1,32 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <p class="copy">© {year} Doug Sellers</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="/contact">Contact</a>
+      <a href="/resume.pdf" download>Resume</a>
+      <a href="/tech">Tech</a>
+    </nav>
+  </div>
+
+  <style>
+    .site-footer{
+      border-top: 1px solid var(--border);
+      background: color-mix(in oklab, var(--bg) 96%, transparent);
+    }
+    .site-footer .container{
+      padding-block: 10px;                 /* compact vertical padding */
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 8px; flex-wrap: wrap;           /* prevents tall single column */
+    }
+    .copy{ margin: 0; color: var(--muted); font-size: 12px; }
+    .foot-links{ display:flex; gap: 10px; }
+    .foot-links a{ color: var(--muted); font-size: 12px; text-decoration: none; }
+    @media (max-width: 480px){
+      .site-footer .container{ padding-block: 8px; }
+    }
+  </style>
+</footer>

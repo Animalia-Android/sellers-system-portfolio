@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ICON_META, iconUrl } from "../lib/icons";
+
+/** Data */
+type Item = {
+  id: string;
+  name: string;
+  icon?: Meta;
+  level: "Core" | "Confident" | "Exploring";
+  when: string;
+  tags?: string[];
+  cats: string[];
+};
+
+type Meta = { slug: string; light: string; dark: string };
+
+const TECH: Record<string, Item[]> = {
+  Frontend: [
+    { id:"react", name:"React", icon:ICON_META.react, level:"Core", when:"SPAs & interactive islands", tags:["JSX","Hooks"], cats:["frontend"] },
+    { id:"nextjs", name:"Next.js", icon:ICON_META.nextjs, level:"Confident", when:"SSR/ISR & product sites", tags:["RSC","App Router"], cats:["frontend"] },
+    { id:"astro", name:"Astro", icon:ICON_META.astro, level:"Core", when:"Content-first, tiny JS pages", tags:["Islands","MDX"], cats:["frontend"] },
+    { id:"typescript", name:"TypeScript", icon:ICON_META.typescript, level:"Core", when:"Safety & refactors at scale", tags:["Types","DX"], cats:["frontend"] },
+    { id:"tailwind", name:"Tailwind CSS", icon:ICON_META.tailwind, level:"Core", when:"Fast, consistent styling", tags:["Utility"], cats:["frontend"] },
+    { id:"framer", name:"Framer Motion", icon:ICON_META.framer, level:"Confident", when:"Micro-interactions", tags:["Motion"], cats:["frontend"] },
+    { id:"radix", name:"Radix UI", icon:ICON_META.radix, level:"Confident", when:"Accessible primitives", tags:["A11y"], cats:["frontend"] },
+    { id:"mdx", name:"MDX", icon:ICON_META.mdx, level:"Core", when:"Case studies with components", tags:["Content"], cats:["frontend","content"] },
+    { id:"vite", name:"Vite", icon:ICON_META.vite, level:"Confident", when:"Fast dev builds", tags:["Build"], cats:["frontend","tooling"] },
+  ],
+  Mobile: [
+    { id:"react-native", name:"React Native", icon:ICON_META["react-native"], level:"Confident", when:"Cross-platform apps", tags:["iOS","Android"], cats:["mobile"] },
+    { id:"expo", name:"Expo", icon:ICON_META.expo, level:"Confident", when:"Rapid RN dev & deploy", tags:["Expo Router"], cats:["mobile"] },
+  ],
+  Backend: [
+    { id:"node", name:"Node.js", icon:ICON_META.node, level:"Confident", when:"APIs & tooling", tags:["JS"], cats:["backend"] },
+    { id:"express", name:"Express", icon:ICON_META.express, level:"Confident", when:"Simple REST services", tags:["HTTP"], cats:["backend"] },
+    { id:"postgres", name:"PostgreSQL", icon:ICON_META.postgres, level:"Confident", when:"Relational data", tags:["SQL"], cats:["backend","data"] },
+    { id:"prisma", name:"Prisma", icon:ICON_META.prisma, level:"Confident", when:"Typed DB access", tags:["ORM"], cats:["backend","data"] },
+    { id:"supabase", name:"Supabase", icon:ICON_META.supabase, level:"Exploring", when:"Auth & storage quickstarts", tags:["BaaS"], cats:["backend","infra"] },
+    { id:"firebase", name:"Firebase", icon:ICON_META.firebase, level:"Exploring", when:"Push & simple auth", tags:["BaaS"], cats:["backend","infra"] },
+  ],
+  Data_Maps: [
+    { id:"chartjs", name:"Chart.js", icon:ICON_META.chartjs, level:"Confident", when:"Lightweight charts", tags:["Viz"], cats:["data"] },
+    { id:"leaflet", name:"Leaflet", icon:ICON_META.leaflet, level:"Confident", when:"Maps & markers", tags:["Maps"], cats:["data","maps"] },
+    { id:"mapbox", name:"Mapbox", icon:ICON_META.mapbox, level:"Exploring", when:"Custom tiles/styles", tags:["Maps"], cats:["data","maps"] },
+  ],
+  AI: [
+    { id:"openai", name:"OpenAI API", icon:ICON_META.openai, level:"Confident", when:"Recommendations & assist", tags:["LLM"], cats:["ai"] },
+  ],
+  Infra_Tooling: [
+    { id:"vercel", name:"Vercel", icon:ICON_META.vercel, level:"Core", when:"Zero-config deploys", tags:["Edge","CI"], cats:["infra"] },
+    { id:"github", name:"GitHub", icon:ICON_META.github, level:"Core", when:"Source & issues", tags:["Git"], cats:["infra","tooling"] },
+  ],
+};
+
+const ORDER = ["Frontend","Mobile","Backend","Data_Maps","AI","Infra_Tooling"];
+const LABELS: Record<string,string> = { Data_Maps:"Data/Maps", Infra_Tooling:"Infra/Tooling" };
+const entries = ORDER.map(k => [k, TECH[k]] as [string, Item[]]);
+---
+
+<BaseLayout title="Tech — Doug Sellers">
+  <section style="display:grid;gap:14px;padding:8px 0;">
+    <h1>Tech</h1>
+
+    <!-- Jump-to dropdown -->
+    <div class="toolbar">
+      <label for="jump" class="sr-only">Jump to category</label>
+      <select id="jump" class="select">
+        <option value="">Jump to…</option>
+        {entries.map(([group, items]) => (
+          <option value={`cat-${group}`}>{(LABELS[group] ?? group)} ({items.length})</option>
+        ))}
+      </select>
+    </div>
+
+    <!-- Accordion -->
+    <div id="accordion" class="accordion">
+      {entries.map(([group, items]) => (
+        <details class="group" id={`cat-${group}`}>
+          <summary class="summary">
+            <span>{(LABELS[group] ?? group)}</span>
+            <span class="count">{items.length}</span>
+          </summary>
+          <div class="cards">
+            {items.map((t) => (
+              <article class="card" data-level={t.level.toLowerCase()}>
+                <div class="row">
+                  {t.icon ? <img 
+                      class="icon"
+                            width="24" height="24" alt=""
+                            data-icon={t.id}
+                            data-src-dark={iconUrl(t.id, 'dark')}
+                            data-src-light={iconUrl(t.id, 'light')}
+                            src={iconUrl(t.id, 'dark')}
+                            loading="lazy"
+                     /> : <div class="icon placeholder">{t.name[0]}</div>}
+                  <strong class="name">{t.name}</strong>
+                  <span class={"badge " + t.level.toLowerCase()}>{t.level}</span>
+                </div>
+                <p class="when">{t.when}</p>
+                {t.tags?.length ? <p class="tags">{t.tags.join(" · ")}</p> : null}
+              </article>
+            ))}
+          </div>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+    .toolbar{display:flex;justify-content:flex-end}
+    .select{padding:.55rem .7rem;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--ink)}
+
+    .accordion{display:grid;gap:10px}
+    details.group{border:1px solid var(--border);border-radius:14px;background:var(--card);overflow:hidden}
+    .summary{display:flex;align-items:center;gap:8px;justify-content:space-between;cursor:pointer;padding:.75rem 1rem;list-style:none}
+    .summary::-webkit-details-marker{display:none}
+    .count{font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 8px;background:var(--bg)}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px}
+    .card{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg)}
+    .row{display:flex;gap:8px;align-items:center}
+    .icon{width:24px;height:24px;border-radius:6px}
+    .icon.placeholder{display:grid;place-items:center;background:var(--card);border:1px solid var(--border);font-size:12px}
+    .name{flex:1}
+    .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--card)}
+    .badge.core{border-color:#205d33}
+    .badge.confident{border-color:#6b4a0a}
+    .badge.exploring{border-color:#7a1f1a}
+    .when{margin:.4rem 0 0;color:var(--ink)}
+    .tags{margin:.2rem 0 0;color:var(--muted);font-size:12px}
+  </style>
+
+  <!-- Jump-to behavior: open the chosen section and scroll it into view -->
+  <script is:inline>
+    (function () {
+      var sel = document.getElementById("jump");
+      if (!sel) return;
+      sel.addEventListener("change", function () {
+        var id = sel.value;
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (!el) return;
+        (el as HTMLDetailsElement).open = true;
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      // If URL has a hash like #cat-Frontend, open it on load
+      if (location.hash) {
+        var target = document.querySelector(location.hash);
+        if (target && target.tagName.toLowerCase() === "details") {
+          (target as HTMLDetailsElement).open = true;
+        }
+      }
+    })();
+  </script>
+</BaseLayout>
