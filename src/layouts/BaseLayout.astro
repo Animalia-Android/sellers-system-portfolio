@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
+import NavBar from "../components/NavBar.astro";
 
 const apps = await getCollection("apps");
 const items = apps.map(a => ({ title:a.data.title, url:a.data.url, icon:a.data.icon, tags:a.data.tags, hotkey:a.data.hotkey }));
@@ -31,28 +32,12 @@ const { title = "Douglas Sellers — Portfolio", description = "Fast, human-cent
     </script>
   </head>
   <body>
-    <header style="position:sticky;top:0;backdrop-filter:saturate(1.1) blur(6px);background:color-mix(in oklab,var(--bg) 88%, transparent);border-bottom:1px solid var(--border);">
-      <div class="container">
-        <nav>
-          <a href="/">Home</a>
-          <a href="/experience">Experience</a>
-          <a href="/projects">Projects</a>
-          <!-- <a href="/apps">Small Apps</a> -->
-          <!-- <a href="/tech">Tech</a> -->
-          <a href="/about">About</a>
-          <a href="/contact" style="margin-left:auto">Contact</a>
-          <button id="theme-toggle" class="btn">Light/Dark</button>
-        </nav>
-      </div>
-    </header>
-
+    <NavBar />
     <main class="container">
       <slot />
     </main>
-
     <!-- Secret launcher island -->
     <QuickLauncher client:load apps={items} />
-
     <Footer />
 
     <!-- Theme toggle logic (browser-only) -->
