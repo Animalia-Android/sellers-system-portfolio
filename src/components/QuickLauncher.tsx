@@ -110,9 +110,9 @@ export default function QuickLauncher({ apps }: { apps: AppItem[] }) {
             </a>
           ))}
         </div>
-        <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
+        {/* <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
           Tip: double-tap <kbd>Shift</kbd> anywhere to open.
-        </div>
+        </div> */}
       </div>
     </div>
   );
